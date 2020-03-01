@@ -84,8 +84,10 @@
 			return new Response(500, ['Content-Type' => 'application/json'], json_encode(['error' => 'Internal server error.']));
 		}
 	});
-	$socket = new SocketServer($config['port'], $loop);
+	$listenPort = preg_match('#^[0-9]+$#', $config['port']) ? '0.0.0.0:' . $config['port'] : $config['port'];
+	$socket = new SocketServer($listenPort, $loop);
 	$server->listen($socket);
+	doLog(LogLevel::INFO, 'Server Listening on: ', $listenPort);
 
 	$server->on('error', function (Throwable $t) {
 		doLog(LogLevel::ERROR, 'Error: ', $t->getMessage());
@@ -224,8 +226,6 @@
 	function genUUID() {
 		return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
 	}
-
-	doLog(LogLevel::INFO, 'Server Listening on port: ', $config['port']);
 
 	doLog(LogLevel::INFO, 'Starting.');
 	$loop->run();
