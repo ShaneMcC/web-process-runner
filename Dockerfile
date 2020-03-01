@@ -1,4 +1,4 @@
-FROM php:7.4.3-cli
+FROM php:7.4.3-cli-alpine
 MAINTAINER Shane Mc Cormack <dataforce@dataforce.org.uk>
 
 WORKDIR /app
@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . /app
 
 RUN \
-  apt-get update && apt-get install -y git unzip wget && \
+  apk update && apk add git unzip curl wget docker && \
   ln -s /usr/local/bin/php /usr/bin/php && \
   docker-php-source extract && \
   docker-php-ext-install pcntl && \
