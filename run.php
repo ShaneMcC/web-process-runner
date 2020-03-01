@@ -72,6 +72,50 @@
 		doLog(LogLevel::INFO, 'All jobs terminated.');
 	});
 
+
+	$firstRun = $config['scripts'] . '/firstRun.sh';
+	if (file_exists($firstRun) && is_executable($firstRun)) {
+		doLog(LogLevel::INFO, 'Running first-run script...');
+
+		// Create the process.
+		$process = new Process($firstRun);
+
+		// Start the process
+		$process->start($loop);
+
+		$stdout = '';
+		$stderr = '';
+
+		// Output data from the process to our logger
+		$process->stdout->on('data', function ($chunk) use (&$stdout) {
+			$stdout .= $chunk;
+			if (strpos($stdout, "\n") !== false) {
+				$bits = explode("\n", $stdout);
+				$stdout = array_pop($bits);
+				foreach ($bits as $b) { doLog(LogLevel::INFO, $b); }
+			}
+		});
+		$process->stderr->on('data', function ($chunk) use (&$stderr) {
+			$stderr .= $chunk;
+			if (strpos($stderr, "\n") !== false) {
+				$bits = explode("\n", $stderr);
+				$stderr = array_pop($bits);
+				foreach ($bits as $b) { doLog(LogLevel::ERROR, $b); }
+			}
+		});
+
+		// Handle the process exiting.
+		$process->on('exit', function($exitCode, $termSignal) use ($loop, $stdout, $stderr) {
+			if (!empty($stdout)) { doLog(LogLevel::INFO, $stdout); }
+			if (!empty($stderr)) { doLog(LogLevel::ERROR, $stderr); }
+			doLog(LogLevel::INFO, 'first-run exited with exit code: ', $exitCode);
+
+			$loop->stop();
+		});
+
+		$loop->run();
+	}
+
 	doLog(LogLevel::INFO, 'Preparing HTTP Listener.');
 	$server = new HTTPServer(function (ServerRequestInterface $request) {
 		try {
@@ -105,7 +149,7 @@
 		if ($path == 'favicon.ico') { return new Response(404, [], ''); }
 
 		doLog(LogLevel::DEBUG, 'Got Request: ', $path);
-		$path = preg_replace('#/+#', '/', str_replace('../', '/', $path)); // Remove invalid bits from paths.
+		$path = preg_replace('#/+#', '/', str_replace('./', '/', str_replace('../', '/', $path))); // Remove invalid bits from paths.
 		if ($path != $origPath) { doLog(LogLevel::DEBUG, 'Handling as: ', $path); }
 
 		$bits = explode('/', $path, 3);
@@ -122,7 +166,7 @@
 			// Start a new process.
 			$execFile = $config['scripts'] . '/' . $param;
 
-			if (file_exists($execFile) && is_executable($execFile)) {
+			if ($param != 'firstRun.sh' && file_exists($execFile) && is_executable($execFile)) {
 				$jobID = genUUID();
 				while (isset($jobs[$jobID])) { $jobID = genUUID(); }
 				$jobs[$jobID] = ['process' => null, 'state' => 'running', 'stdout' => '', 'stderr' => '', 'exitCode' => null, 'started' => time(), 'ended' => null];
