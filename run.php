@@ -118,7 +118,7 @@
 			return new Response(403, ['Content-Type' => 'application/json'], json_encode(['error' => 'Forbidden.']));
 		}
 
-		if ($command == 'run' && $param != null) {
+		if ($command == 'run' && !empty($param)) {
 			// Start a new process.
 			$execFile = $config['scripts'] . '/' . $param;
 
@@ -166,7 +166,7 @@
 
 				return new Response(200, ['Content-Type' => 'application/json'], json_encode(['success' => 'ok', 'jobID' => $jobID]));
 			}
-		} else if ($command == 'info' && $param != null) {
+		} else if ($command == 'info' && !empty($param)) {
 			// Show info about a previously run process.
 			if (isset($jobs[$param])) {
 				$data = $jobs[$param];
@@ -176,7 +176,7 @@
 				return new Response(200, ['Content-Type' => 'application/json'], json_encode($data));
 			}
 
-		} else if ($command == 'signal' && $param != null) {
+		} else if ($command == 'signal' && !empty($param)) {
 			// Signal a running process.
 
 			$bits = explode('/', $param);
