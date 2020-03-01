@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . /app
 
 RUN \
-  apt-get update && apt-get install -y git unzip && \
+  apt-get update && apt-get install -y git unzip wget && \
   ln -s /usr/local/bin/php /usr/bin/php && \
   docker-php-source extract && \
   docker-php-ext-install pcntl && \
