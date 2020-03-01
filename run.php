@@ -49,6 +49,7 @@
 		}
 	}
 	$logger = new Logger($config['logLevel']);
+	$jobs = [];
 
 	doLog(LogLevel::INFO, 'Starting...');
 
@@ -111,6 +112,11 @@
 			doLog(LogLevel::INFO, 'first-run exited with exit code: ', $exitCode);
 
 			$loop->stop();
+
+			if ($exitCode != 0) {
+				doLog(LogLevel::ERROR, 'First-run did not complete successfully, exiting.');
+				die();
+			}
 		});
 
 		$loop->run();
@@ -139,8 +145,6 @@
 			doLog(LogLevel::ERROR, "\t", $s);
 		}
 	});
-
-	$jobs = [];
 
 	function handleHTTPRequest(ServerRequestInterface $request) {
 		global $jobs, $config, $loop;
