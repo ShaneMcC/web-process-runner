@@ -15,5 +15,10 @@
 		"psr/log": "^1.1",
 		"react/http": "^0.8.6",
 		"react/child-process": "^0.6.1"
-	}
+	},
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    }
 }
