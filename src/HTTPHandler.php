@@ -72,9 +72,16 @@
 					$job = $this->jobs->getJob($jobID);
 
 					// Send the process any data we were given over STDIN.
-					// TODO: Some data from the request would be nice, eg method,
-					// headers, query params etc.
-					$data = ['data' => $request->getBody()];
+					$data = ['jobID' => $jobID,
+					         'method' => $request->getMethod(),
+					         'headers' => $request->getHeaders(),
+					         'body' => (String)$request->getBody(),
+					         'serverParams' => $request->getServerParams(),
+					         'cookies' => $request->getCookieParams(),
+					         'queryParams' => $request->getQueryParams(),
+					         'attributes' => $request->getAttributes(),
+					        ];
+					print_r(json_encode($data, JSON_PRETTY_PRINT));
 					$job['process']->stdin->write(json_encode($data));
 					$job['process']->stdin->end();
 
