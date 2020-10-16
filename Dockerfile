@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . /app
 
 RUN \
-  apk update && apk add git unzip curl wget docker && \
+  apk update && apk add git unzip curl wget docker ssh && \
   ln -s /usr/local/bin/php /usr/bin/php && \
   docker-php-source extract && \
   docker-php-ext-install pcntl && \
