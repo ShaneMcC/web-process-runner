@@ -1,0 +1,14 @@
+name: Dependabot auto-merge minor/patch
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: write
+  pull-requests: write
+  repository-projects: write
+
+jobs:
+  dependabot:
+    uses: ShaneMcC/.github/.github/workflows/automergeMinorOrPatch.yml@master
+    secrets: inherit
