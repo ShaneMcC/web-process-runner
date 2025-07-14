@@ -1,4 +1,4 @@
-FROM php:8.1-cli-alpine
+FROM php:8.3-cli-alpine
 MAINTAINER Shane Mc Cormack <dataforce@dataforce.org.uk>
 
 WORKDIR /app
@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . /app
 
 RUN \
-  apk update && apk add git unzip curl wget docker openssh && \
+  apk update && apk add git unzip curl wget docker openssh bash && \
   ln -s /usr/local/bin/php /usr/bin/php && \
   docker-php-source extract && \
   docker-php-ext-install pcntl && \
