@@ -1,7 +1,7 @@
 <?php
 
 	use React\Http\Server as HTTPServer;
-	use React\Http\Response;
+	use React\Http\Message\Response;
 	use Psr\Http\Message\ServerRequestInterface;
 	use Psr\Log\LogLevel;
 
