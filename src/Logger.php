@@ -30,7 +30,7 @@
 			return $this->levels[$level] <= $this->levels[$this->level];
 		}
 
-		public function log($level, $message, $context = []) {
+		public function log($level, \Stringable|string $message, array $context = []): void {
 			if ($this->validLog($level)) {
 				echo sprintf('[%s] [%s] %s', date('r'), strtoupper($level), $message), "\n";
 			}
