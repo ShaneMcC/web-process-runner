@@ -1,3 +1,10 @@
 vendor
 config.local.php
 scripts
+.git
+.github
+.gitignore
+.gitmodules
+.dockerignore
+*.md
+LICENSE
