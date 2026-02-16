@@ -1,4 +1,4 @@
-FROM php:8.5.2-cli-alpine
+FROM php:8.5.3-cli-alpine
 MAINTAINER Shane Mc Cormack <dataforce@dataforce.org.uk>
 
 WORKDIR /app
